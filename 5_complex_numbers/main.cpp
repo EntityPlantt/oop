@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cmath>
 
 // https://en.wikipedia.org/wiki/Fast_inverse_square_root
 constexpr float Q_rsqrt( float number )
@@ -69,8 +70,38 @@ struct ComplexNumber {
 	ComplexNumber &operator/=(const float &z) { return *this = *this / z; }
 	ComplexNumber &operator/=(const ComplexNumber &z) { return *this = *this / z; }
 
+	bool operator==(const ComplexNumber &z) const {
+		return real == z.real && imag == z.imag;
+	}
+	bool operator!=(const ComplexNumber &z) const {
+		return !(*this == z);
+	}
+	// За користење во сортирачки структури!
+	bool operator<(const ComplexNumber &z) const {
+		if (real == z.real) return imag < z.imag;
+		return real < z.real;
+	}
+
+	ComplexNumber &operator++() {
+		++real;
+		return *this;
+	}
+	ComplexNumber operator++(int) {
+		return ++*this;
+	}
+	ComplexNumber &operator--() {
+		--real;
+		return *this;
+	}
+	ComplexNumber operator--(int) {
+		return --*this;
+	}
+
 	friend std::ostream &operator<<(std::ostream &os, const ComplexNumber &z) {
-		return os << z.real << " + " << z.imag << 'i';
+		return os << z.real << (z.imag < 0 ? " - " : " + ") << fabs(z.imag) << 'i';
+	}
+	friend std::istream &operator>>(std::istream &is, ComplexNumber &z) {
+		return is >> z.real >> z.imag;
 	}
 };
 
@@ -80,4 +111,5 @@ int main() {
 	std::cout << "a + 1 = " << a + 1 << '\n';
 	std::cout << "sqrt(3) = " << ~(a + 1) << '\n';
 	std::cout << "nekojsi broj = " << std::fixed << (ComplexNumber(rand(), rand()) / 1000) << '\n';
+	a++;
 }
